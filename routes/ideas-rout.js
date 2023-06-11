@@ -1,12 +1,14 @@
 const express = require("express");
-const { listIdeas, updateIdeas } = require("../controllers/ideasControllers");
+const { listIdeas, doneIdeaById, updateStatusById } = require("../controllers/ideasControllers");
+const { isValidId } = require("../utils/index");
 
 const  router = express.Router();
 
 router.get("/", listIdeas);
 
-router.put("/:id",updateIdeas)
+router.patch("/:id/status",isValidId, updateStatusById);
 
+router.patch("/:id/done", isValidId, doneIdeaById);
 
 module.exports = router;
 

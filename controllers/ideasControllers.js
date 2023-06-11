@@ -1,15 +1,12 @@
-const ideas = require("../db/newDB.json");
-const utils = require("../utils/index");
-const { HttpError, ideaUdpateSchema } = utils;
+const Idea = require("../model/idea");
+const HttpError = require("../halpers/HttpError");
+const { ideaStatusSchema ,ideaDoneSchema} = require("../utils/index");
 
-
-
-
-const listIdeas = async (req, res, next) => {
+const listIdeas = async ( _ , res, next) => {
     try {
-        const result = await ideas;
+        const result = await Idea.find();
         if (!result) {
-            throw HttpError(500, "Server error")
+            throw HttpError(500, "Server error");
         };
 
         res.json(result);
@@ -18,18 +15,47 @@ const listIdeas = async (req, res, next) => {
     }
 };
 
-const updateIdeas = async (req, res, next) => {
+
+
+
+
+const updateStatusById = async (req, res, next) => {
+    console.log("updateStatusById");
+
+    try {
+       const {error} = ideaStatusSchema.validate(req.body);
+      if (error) {
+             throw HttpError(400, error.message);
+       }
+       const { id } = req.params; 
+       const result = await Idea.findByIdAndUpdate(id, req.body, { new: true });
+       
+        if (!result) {
+             throw HttpError(404, `Idea with ${id} not found`);
+          }
+         res.json(result)
+
+     } catch (error) {
+          next(error);
+    }
+};
+
+
+const doneIdeaById = async (req, res, next) => { 
+    console.log("doneIdeaById")
     try { 
-        const {error} = ideaUdpateSchema.validate(req.body);
+        const {error} = ideaDoneSchema.validate(req.body);
         if (error) {
             throw HttpError(400, error.message);
         }
         const { id } = req.params;
-        // const result = await fn для обновления
-        // if (!result) {
-            // throw HttpError(404, `Idea with ${id} not found`);
-        //  }
-        // res.json(result)
+    
+        const result = await Idea.findByIdAndUpdate(id, req.body, {new: true});
+ 
+        if (!result) {
+            throw HttpError(404, `Idea with ${id} not found`);
+         }
+        res.json(result)
 
     }
     catch (error) {
@@ -38,9 +64,8 @@ const updateIdeas = async (req, res, next) => {
 };
 
 
-
-
 module.exports = {
     listIdeas,
-    updateIdeas,
+    updateStatusById,
+    doneIdeaById,
 };

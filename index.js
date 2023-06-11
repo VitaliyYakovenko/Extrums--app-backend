@@ -1,12 +1,8 @@
 const mongoose = require("mongoose");
 const app = require("./app");
 
-
 const PASSWORD = "U4z7p7e30pxBfFfc";
 const DB_HOST = `mongodb+srv://Vitaliy:${PASSWORD}@cluster0.dbrqjaw.mongodb.net/my-ideas?retryWrites=true&w=majority`;
-
-// U4z7p7e30pxBfFfc
-
 
 mongoose.connect(DB_HOST)
     .then(
